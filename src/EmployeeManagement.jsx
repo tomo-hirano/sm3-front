@@ -69,18 +69,31 @@ const EmployeeManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (searchTerm.trim() === '') {
       setError('検索条件を入力してください。');
       return;
     }
     setError(null);
-    const filteredEmployees = employees.filter(emp =>
-      emp.name.includes(searchTerm) || emp.nameKana.includes(searchTerm) || emp.email.includes(searchTerm)
-    );
-    setEmployees(filteredEmployees);
+    try {
+      const response = await axios.get('http://localhost:8080/api/employees');
+      const fetchedEmployees = response.data;
+      const filteredEmployees = fetchedEmployees.filter(emp =>
+//        emp.name.includes(searchTerm) || emp.nameKana.includes(searchTerm) || emp.email.includes(searchTerm)
+        emp.name.includes(searchTerm)
+      );
+      setEmployees(filteredEmployees);
+    } catch (error) {
+      setError('従業員データの取得に失敗しました。');
+    }
   };
-  
+    
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setEmployees([]); // Reset employees to initial empty array
+    setError(null); // Clear any error messages
+  };
+
   return (
     <Container>
       <Header>従業員情報管理</Header>
