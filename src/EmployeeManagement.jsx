@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 // スタイリングの定義
 const Container = styled.div`
@@ -65,6 +66,7 @@ const Table = styled.table`
 `;
 
 const EmployeeManagement = () => {
+  const navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
@@ -94,6 +96,10 @@ const EmployeeManagement = () => {
     setError(null); // Clear any error messages
   };
 
+  const handleEdit = (employee) => {
+    navigate('/edit', { state: { employee } });
+  }; 
+  
   return (
     <Container>
       <Header>従業員情報管理</Header>
