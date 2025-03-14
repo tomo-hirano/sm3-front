@@ -1,91 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
 const EmployeeEdit = () => {
-  const [employees, setEmployees] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const location = useLocation();
+  const { employee } = location.state || {};
+  const [formData, setFormData] = useState({
+    name: '',
+    nameKana: '',
+    email: '',
+  });
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchEmployees();
-  }, []);
+    if (employee && employee.employeeNo) {
+      fetchEmployeeById(employee.employeeNo);
+    }
+  }, [employee]);
 
-  const fetchEmployees = async () => {
+  const fetchEmployeeById = async (id) => {
     try {
-      const response = await axios.get('/api/employees');
-      setEmployees(response.data);
+      const response = await axios.get(`http://localhost:8080/api/employees/${id}`);
+      setFormData(response.data);
     } catch (err) {
       setError('従業員情報の取得に失敗しました。');
       console.error(err);
     }
   };
 
-  const updateEmployee = async (employee) => {
-    try {
-      await axios.put(`/api/employees/${employee.id}`, employee);
-      fetchEmployees(); // 更新後に再取得
-    } catch (err) {
-      setError('従業員情報の更新に失敗しました。');
-      console.error(err);
-    }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleSearch = () => {
-    const filtered = employees.filter(emp => 
-      emp.name.includes(searchTerm) || emp.nameKana.includes(searchTerm) || emp.employeeNo.includes(searchTerm)
-    );
-    setEmployees(filtered);
-  };
-
-  const handleClearSearch = () => {
-    setSearchTerm('');
-    fetchEmployees();
-  };
-
-  const handleEdit = (employee) => {
-    // 編集ボタンのクリックハンドラ
-    console.log('Edit employee:', employee);
-    // ここで編集ロジックを実装
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // 保存ロジックをここに実装
   };
 
   return (
     <div>
-      <h1>従業員情報管理</h1>
+      <h1>従業員情報編集</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div>
-        <input 
-          type="text" 
-          value={searchTerm} 
-          onChange={(e) => setSearchTerm(e.target.value)} 
-          placeholder="検索条件を入力" 
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="名前"
         />
-        <button onClick={handleSearch}>検索</button>
-        <button onClick={handleClearSearch}>クリア</button>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>編集</th>
-            <th>従業員番号</th>
-            <th>名前</th>
-            <th>かな名</th>
-            <th>メール</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employees.map(emp => (
-            <tr key={emp.employeeNo}>
-              <td><button onClick={() => handleEdit(emp)}>編集</button></td>
-              <td>{emp.employeeNo}</td>
-              <td>{emp.name}</td>
-              <td>{emp.nameKana}</td>
-              <td>{emp.email}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        <input
+          type="text"
+          name="nameKana"
+          value={formData.nameKana}
+          onChange={handleChange}
+          placeholder="かな名"
+        />
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="メール"
+        />
+        <button type="submit">保存</button>
+      </form>
     </div>
   );
 };
 
-export default EmployeeEdit
+export default EmployeeEdit;
