@@ -69,7 +69,18 @@ const EmployeeManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
 
-
+  const handleSearch = () => {
+    if (searchTerm.trim() === '') {
+      setError('検索条件を入力してください。');
+      return;
+    }
+    setError(null);
+    const filteredEmployees = employees.filter(emp =>
+      emp.name.includes(searchTerm) || emp.nameKana.includes(searchTerm) || emp.email.includes(searchTerm)
+    );
+    setEmployees(filteredEmployees);
+  };
+  
   return (
     <Container>
       <Header>従業員情報管理</Header>
