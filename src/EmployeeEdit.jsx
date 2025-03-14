@@ -42,9 +42,24 @@ const EmployeeEdit = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // 保存ロジックをここに実装
+    try {
+      if (employee && employee.id) {
+        // Update existing employee
+        await axios.put(`http://localhost:8080/api/employees/${employee.id}`, formData);
+        setError(null);
+        alert('従業員情報が更新されました。');
+      } else {
+        // New employee registration
+        await axios.post('http://localhost:8080/api/employees', formData);
+        setError(null);
+        alert('新しい従業員が登録されました。');
+      }
+    } catch (err) {
+      setError('従業員情報の保存に失敗しました。');
+      console.error(err);
+    }
   };
 
   return (
