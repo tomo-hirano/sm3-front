@@ -6,6 +6,7 @@ const EmployeeEdit = () => {
   const location = useLocation();
   const { employee } = location.state || {};
   const [formData, setFormData] = useState({
+    employeeNo: '',
     name: '',
     nameKana: '',
     email: '',
@@ -13,8 +14,16 @@ const EmployeeEdit = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (employee && employee.employeeNo) {
-      fetchEmployeeById(employee.employeeNo);
+    if (!employee) {
+      // 新規登録の場合、フォームをリセット
+      setFormData({
+        employeeNo: '',
+        name: '',
+        nameKana: '',
+        email: '',
+      });
+    } else if (employee.id) {
+      fetchEmployeeById(employee.id);
     }
   }, [employee]);
 
@@ -43,6 +52,13 @@ const EmployeeEdit = () => {
       <h1>従業員情報編集</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="employeeNo"
+          value={formData.employeeNo}
+          onChange={handleChange}
+          placeholder="従業員番号"
+        />
         <input
           type="text"
           name="name"

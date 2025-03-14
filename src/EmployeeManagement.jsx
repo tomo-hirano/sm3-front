@@ -99,7 +99,7 @@ const EmployeeManagement = () => {
   const handleEdit = (employee) => {
     navigate('/edit', { state: { employee } });
   }; 
-  
+
   return (
     <Container>
       <Header>従業員情報管理</Header>
@@ -113,6 +113,7 @@ const EmployeeManagement = () => {
         />
         <button onClick={handleSearch}>検索</button>
         <button onClick={handleClearSearch}>クリア</button>
+        <button onClick={() => navigate('/register')}>登録</button> {/* 新しい登録ボタン */}
       </SearchContainer>
       <Table>
         <thead>

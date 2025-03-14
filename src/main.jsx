@@ -11,6 +11,7 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<EmployeeManagement />} />
         <Route path="/edit" element={<EmployeeEdit />} />
+        <Route path="/register" element={<EmployeeEdit />} /> {/* 新規登録用のルート */}
       </Routes>
     </Router>
   </StrictMode>,
